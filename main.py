@@ -9,7 +9,7 @@ from image import imageWindow
 if __name__ == "__main__":
 
     master = Tk()
-    master.title("Hangman Home Screen")
+    master.title("Calculator Home Screen")
     master.geometry("500x600")
 
     label = Label(master, text= "Welcome")
