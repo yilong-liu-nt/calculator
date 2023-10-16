@@ -11,13 +11,17 @@ expression = ""
 
 # Function to update expression
 # in the text entry box
-def press(num: str, event=None):
+def press(one_key: str, event=None):
     # point out the global expression variable
     global expression
     global equation
 
     # concatenation of string
-    expression = expression + num
+    if one_key == "<BackSpace>":
+        if len(expression) >= 1:
+            expression = expression[:-1]
+    else:
+        expression = expression + one_key
 
     # update the expression by using set method
     equation.set(expression)
@@ -57,7 +61,7 @@ def equalpress(event=None):
     
 # Function to clear the contents
 # of text entry box
-def clear():
+def clear(event=None):
     global expression
     expression = ""
     equation.set("")
@@ -108,6 +112,8 @@ def basicWindow(master):
     buttons_dict["*"] = ["   *   ", "black", "red", k+4, 0]
     buttons_dict["/"] = ["   /   ", "black", "red", k+4, 1]
     buttons_dict["."] = ["   .   ", "black", "red", k+4, 2]
+    buttons_dict["<BackSpace>"] = ["  Backspace  ", "black", "red", k+5, 0]
+
 
     basic_mode_buttons = {}
     for button_name in buttons_dict:
@@ -127,16 +133,17 @@ def basicWindow(master):
 
 
 
-    equal = Button(gui, text=' = ', fg='black', bg='red',
-                   command=equalpress, height=1, width=7)
-    equal.grid(row=k+4, column=2)
-    basic_mode_buttons["="] = equal
-    gui.bind("=", partial(equalpress))
-
     clear_button = Button(gui, text='Clear', fg='black', bg='red',
                    command=clear, height=1, width=7)
-    clear_button.grid(row=k+4, column=1)
+    clear_button.grid(row=k+5, column=1)
     basic_mode_buttons['Clear'] = clear_button
+    gui.bind("<Delete>", partial(clear))
+
+    equal = Button(gui, text=' = ', fg='black', bg='red',
+                   command=equalpress, height=1, width=7)
+    equal.grid(row=k+5, column=2)
+    basic_mode_buttons["="] = equal
+    gui.bind("=", partial(equalpress))
 
 
     # start the GUI
