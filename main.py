@@ -19,19 +19,19 @@ if __name__ == "__main__":
     # new window on button click
     btn = Button(master,
             text="Basic",
-            height= 10, width = 20,
+            height= 5, width = 20,
             command=partial(basicWindow, master)
             ).grid(row=0, column=0,)
     btn2 = Button(master,
             text="Image",
-            height= 10, width = 20,
+            height= 5, width = 20,
             command=partial(imageWindow, master)
-            ).grid(row=1, column=0,)
+            ).grid(row=3, column=0)
     btn3 = Button(master,
             text="Text",
-            height= 10, width = 20,
+            height= 5, width = 20,
             command=partial(textWindow, master)
-            ).grid(row=2, column=0,)
+            ).grid(row=5, column=0,)
 
     # start the GUI
     master.mainloop()

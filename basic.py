@@ -57,6 +57,24 @@ def equalpress(event=None):
 
         equation.set(" error ")
         expression = ""
+
+
+def scientific_conversion():
+    global equation
+
+    equation_value = equation.get()
+
+    if equation_value == " error ":
+        return
+    
+    total = float(equation_value)
+
+    if "e" not in equation_value:
+        total_str = format(total, 'e')
+    else:
+        total_str = format(total, 'f')
+
+    equation.set(total_str)
     
     
 # Function to clear the contents
@@ -124,7 +142,7 @@ def basicWindow(master):
             bg=buttons_dict[button_name][2],
             command=partial(press, button_name),
             height=1,
-            width=7
+            width=9
         )
         gui.bind(button_name, partial(press, button_name))
 
@@ -133,18 +151,23 @@ def basicWindow(master):
 
 
 
+
     clear_button = Button(gui, text='Clear', fg='black', bg='red',
-                   command=clear, height=1, width=7)
+                   command=clear, height=1, width=9)
     clear_button.grid(row=k+5, column=1)
     basic_mode_buttons['Clear'] = clear_button
     gui.bind("<Delete>", partial(clear))
 
     equal = Button(gui, text=' = ', fg='black', bg='red',
-                   command=equalpress, height=1, width=7)
+                   command=equalpress, height=1, width=9)
     equal.grid(row=k+5, column=2)
     basic_mode_buttons["="] = equal
     gui.bind("=", partial(equalpress))
 
+    scientific_notation = Button(gui, text=' Toggle e+ ', fg='black', bg='red',
+                   command=scientific_conversion, height=1, width=9)
+    scientific_notation.grid(row=k+6, column=0)
+    basic_mode_buttons["e+"] = scientific_notation
 
     # start the GUI
     gui.mainloop()
