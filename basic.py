@@ -149,7 +149,6 @@ def basicWindow(master):
     buttons_dict["("] = ["  ( ", "black", "red", k+5, 1]
     buttons_dict[")"] = ["  )  ", "black", "red", k+5, 2]
 
-
     basic_mode_buttons = {}
     for button_name in buttons_dict:
         my_button = Button(
@@ -185,6 +184,12 @@ def basicWindow(master):
                    command=scientific_conversion, height=1, width=9)
     scientific_notation.grid(row=k+6, column=1)
     basic_mode_buttons["e+"] = scientific_notation
+
+    exp_button = Button(gui, text=' ^ ', fg='black', bg='red',
+                   command=partial(press, "**"), height=1, width=9)
+    exp_button.grid(row=k+7, column=0)
+    basic_mode_buttons["^"] = exp_button
+    gui.bind("^", partial(press, "**"))
 
     # start the GUI
     gui.mainloop()
