@@ -39,6 +39,9 @@ def equalpress(event=None):
     try:
 
         global expression
+        global expression_backup
+
+        expression_backup = expression
 
         # eval function evaluate the expression
         # and str function convert the result
@@ -61,10 +64,17 @@ def equalpress(event=None):
 
 def scientific_conversion():
     global equation
+    global expression
+    global expression_backup
 
     equation_value = equation.get()
 
+    # if it is "error", do nothing
     if equation_value == " error ":
+        return
+    
+    # only applies when equal is pressed
+    if expression != "":
         return
     
     total = float(equation_value)
@@ -72,7 +82,11 @@ def scientific_conversion():
     if "e" not in equation_value:
         total_str = format(total, 'e')
     else:
-        total_str = format(total, 'f')
+        try:
+            total_str = str(eval(expression_backup))
+        except:
+            total_str = " error "
+
 
     equation.set(total_str)
     
