@@ -4,6 +4,7 @@
 # import everything from tkinter module
 from tkinter import *
 from functools import partial
+import math
 
 # globally declare the expression variable
 expression = ""
@@ -145,6 +146,8 @@ def basicWindow(master):
     buttons_dict["/"] = ["   /   ", "black", "red", k+4, 1]
     buttons_dict["."] = ["   .   ", "black", "red", k+4, 2]
     buttons_dict["<BackSpace>"] = ["  Backspace  ", "black", "red", k+5, 0]
+    buttons_dict["("] = ["  ( ", "black", "red", k+5, 1]
+    buttons_dict[")"] = ["  )  ", "black", "red", k+5, 2]
 
 
     basic_mode_buttons = {}
@@ -168,19 +171,19 @@ def basicWindow(master):
 
     clear_button = Button(gui, text='Clear', fg='black', bg='red',
                    command=clear, height=1, width=9)
-    clear_button.grid(row=k+5, column=1)
+    clear_button.grid(row=k+6, column=0)
     basic_mode_buttons['Clear'] = clear_button
     gui.bind("<Delete>", partial(clear))
 
     equal = Button(gui, text=' = ', fg='black', bg='red',
                    command=equalpress, height=1, width=9)
-    equal.grid(row=k+5, column=2)
+    equal.grid(row=k+6, column=2)
     basic_mode_buttons["="] = equal
     gui.bind("=", partial(equalpress))
 
     scientific_notation = Button(gui, text=' Toggle e+ ', fg='black', bg='red',
                    command=scientific_conversion, height=1, width=9)
-    scientific_notation.grid(row=k+6, column=0)
+    scientific_notation.grid(row=k+6, column=1)
     basic_mode_buttons["e+"] = scientific_notation
 
     # start the GUI
