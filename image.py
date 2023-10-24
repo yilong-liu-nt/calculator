@@ -3,7 +3,9 @@ from tkinter import filedialog
 from functools import partial
 import numpy as np
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter
+
+# https://realpython.com/image-processing-with-the-python-pillow-library/#:~:text=PIL%20stands%20for%20Python%20Imaging,includes%20support%20for%20Python%203.
 
 img1 = None
 img2 = None
@@ -68,19 +70,37 @@ def image_minus(gui):
 
 
 def image_transpose(gui):
-    global img1
+    """
+    Rotate 45 degree
+    """
     global resultImage
-    img1_arr = np.asarray(ImageTk.getimage(img1))
 
-    result_arr = img1_arr.copy()
-
-    for channel_index in range(img1_arr.shape[-1]):
-        result_arr[:,:,channel_index] = np.transpose(img1_arr[:,:,channel_index])
-
-    resultImage = ImageTk.PhotoImage(Image.fromarray(result_arr))
+    my_image = ImageTk.getimage(resultImage)
+    rotated_image = my_image.rotate(45)
+    resultImage = ImageTk.PhotoImage(rotated_image)
 
     Label(gui, image=resultImage).grid(row=3, column=2)
 
+
+def blur_image(gui):
+    global resultImage
+
+    my_image = ImageTk.getimage(resultImage)
+    blurred_image = my_image.filter(ImageFilter.BLUR)
+    resultImage = ImageTk.PhotoImage(blurred_image)
+
+    Label(gui, image=resultImage).grid(row=3, column=2)
+
+
+def edge_image(gui):
+    global resultImage
+
+
+    my_image = ImageTk.getimage(resultImage)
+    edge_restored_image = my_image.filter(ImageFilter.EDGE_ENHANCE)
+    resultImage = ImageTk.PhotoImage(edge_restored_image)
+
+    Label(gui, image=resultImage).grid(row=3, column=2)
 
 def imageWindow(master):
     global img1
@@ -101,7 +121,7 @@ def imageWindow(master):
     
     button_plus = Button(gui, text='-', command=partial(image_minus, gui)).grid(row=0, column=0)
     button_minus = Button(gui, text='+', command=partial(image_add, gui)).grid(row=0, column=1)
-    button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui)).grid(row=0, column=2)
+    button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui)).grid(row=4, column=0)
 
     remove_color_r = Button(gui, text='Remove R').grid(row=1, column=0)
     remove_color_g = Button(gui, text='Remove G').grid(row=1, column=1)
@@ -113,6 +133,12 @@ def imageWindow(master):
     
     upload_button_2 = Button(gui, text='Upload Image 2',
                            command=partial(upload_image_2, gui)).grid(row=2, column=1)
+    
+    blur_button= Button(gui, text='Blur Image',
+                           command=partial(blur_image, gui)).grid(row=4, column=1)
+    edge_button= Button(gui, text='Edge Detection',
+                           command=partial(edge_image, gui)).grid(row=4, column=2)
+    
     
     Label(gui, text = "Result").grid(row=2, column=2)
 
