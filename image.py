@@ -42,9 +42,9 @@ def image_add(gui):
     global resultImage
 
     img1_arr = np.asarray(ImageTk.getimage(img1))
-    img1_arr = np.asarray(ImageTk.getimage(img2))
+    img2_arr = np.asarray(ImageTk.getimage(img2))
 
-    addition = (img1_arr + img1_arr)//2
+    addition = img1_arr//2 + img2_arr//2
 
     resultImage = ImageTk.PhotoImage(Image.fromarray(addition))
 
@@ -58,16 +58,35 @@ def image_minus(gui):
     global resultImage
 
     img1_arr = np.asarray(ImageTk.getimage(img1))
-    img1_arr = np.asarray(ImageTk.getimage(img2))
+    img2_arr = np.asarray(ImageTk.getimage(img2))
 
-    addition = (img1_arr - img1_arr)//2
+    minus_arr = img1_arr - img2_arr
 
-    resultImage = ImageTk.PhotoImage(Image.fromarray(addition))
+    resultImage = ImageTk.PhotoImage(Image.fromarray(minus_arr))
+
+    Label(gui, image=resultImage).grid(row=3, column=2)
+
+
+def image_transpose(gui):
+    global img1
+    global resultImage
+    img1_arr = np.asarray(ImageTk.getimage(img1))
+
+    result_arr = img1_arr.copy()
+
+    for channel_index in range(img1_arr.shape[-1]):
+        result_arr[:,:,channel_index] = np.transpose(img1_arr[:,:,channel_index])
+
+    resultImage = ImageTk.PhotoImage(Image.fromarray(result_arr))
 
     Label(gui, image=resultImage).grid(row=3, column=2)
 
 
 def imageWindow(master):
+    global img1
+    global img2
+    global resultImage
+    
     gui = Toplevel(master)
 
     # set the background colour of GUI window
@@ -77,11 +96,13 @@ def imageWindow(master):
     gui.title("Image Calculator")
 
     # set the configuration of GUI window
-    gui.geometry("540x800")
+    gui.geometry("900x800")
     
     
     button_plus = Button(gui, text='-', command=partial(image_minus, gui)).grid(row=0, column=0)
     button_minus = Button(gui, text='+', command=partial(image_add, gui)).grid(row=0, column=1)
+    button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui)).grid(row=0, column=2)
+
     remove_color_r = Button(gui, text='Remove R').grid(row=1, column=0)
     remove_color_g = Button(gui, text='Remove G').grid(row=1, column=1)
     remove_color_b = Button(gui, text='Remove B').grid(row=1, column=2)
@@ -93,15 +114,17 @@ def imageWindow(master):
     upload_button_2 = Button(gui, text='Upload Image 2',
                            command=partial(upload_image_2, gui)).grid(row=2, column=1)
     
+    Label(gui, text = "Result").grid(row=2, column=2)
 
-    arr=np.ones(image_size)
-    img=Image.fromarray(arr)
+    img=Image.new("RGB", image_size, (255, 255, 255))
     img1=ImageTk.PhotoImage(img)
-
-    arr=np.zeros(image_size)
-    img=Image.fromarray(arr)
-    img2=ImageTk.PhotoImage(img)
-
-
     Label(gui, image=img1).grid(row=3, column=0)
+
+    arr = np.zeros((image_size[0], image_size[1], 4), dtype= int)
+    img2=ImageTk.PhotoImage(Image.fromarray(arr, mode="RGB"))
     Label(gui, image=img2).grid(row=3, column=1)
+
+
+    result = Image.new("RGB", image_size, (0, 0, 0))
+    resultImage = ImageTk.PhotoImage(result)
+    Label(gui, image=resultImage).grid(row=3, column=2)
