@@ -1,11 +1,32 @@
 import random
 from tkinter import *
-def response(gui):
-    response = Label(text=random.choice("yes", "no")).grid(row=1, column=0)
+import time
+from functools import partial
+
+
+
+def show_stuff(gui, target_values):
+
+    num_yes = 0
+    num_no = 0
+    num_nun = 0
+    for one_value in target_values:
+        if one_value.get() == "YES":
+            num_yes +=1
+        elif one_value.get() == "NO":
+            num_no +=1
+        else:
+            num_nun += 1 
+
+    summary = Label(gui, text=f"Number YES: {num_yes}").grid(row=0, column= 4)
+    summary = Label(gui, text=f"Number NO: {num_no}").grid(row=0, column= 5)
+    summary = Label(gui, text=f"Number NONE: {num_nun}").grid(row=0, column= 6)
+
 def textWindow(master):
     gui = Toplevel(master)
 
     # set the background colour of GUI window
+
     gui.configure(background="light green")
 
     # set the title of GUI window
@@ -17,12 +38,20 @@ def textWindow(master):
     
     for index, one_question in enumerate(questions_list):
         print(str(index+1) + ". " + one_question)
-
+ 
+    questions_5 = random.sample(questions_list, 5)
+    target_values = []  
     for i in range(5):
 
-        aa = random.choice(questions_list)
+        aa = questions_5[i]
         question_label=Label(gui, text=aa).grid(row =i, column = 0)
 
         target_value_1 = StringVar(gui)
         target_value_1.set("None") # default value
+
         w = OptionMenu(gui, target_value_1, "YES", "NO").grid(row =i, column = 1)
+        target_values.append(target_value_1)
+
+    show_history= Button(gui, text="Show history", command=partial(show_stuff, gui, target_values)
+                         ).grid(row=0, column=3)
+    
