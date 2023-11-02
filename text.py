@@ -5,22 +5,19 @@ from functools import partial
 
 
 
-def show_stuff(gui, target_values):
+def show_stuff(gui, questions_asked, target_values, questions_dict, response_values):
 
-    num_yes = 0
-    num_no = 0
-    num_nun = 0
-    for one_value in target_values:
+    for index, one_value in enumerate(target_values):
+        question = questions_asked[index]
+        response_string = response_values[index]
+
         if one_value.get() == "YES":
-            num_yes +=1
+            response_string.set(questions_dict[question][0])
         elif one_value.get() == "NO":
-            num_no +=1
+            response_string.set(questions_dict[question][0])
         else:
-            num_nun += 1 
+            response_string.set("Talk to me :(")
 
-    summary = Label(gui, text=f"Number YES: {num_yes}").grid(row=0, column= 4)
-    summary = Label(gui, text=f"Number NO: {num_no}").grid(row=0, column= 5)
-    summary = Label(gui, text=f"Number NONE: {num_nun}").grid(row=0, column= 6)
 
 def textWindow(master):
     gui = Toplevel(master)
@@ -34,24 +31,67 @@ def textWindow(master):
 
     # set the configuration of GUI window
     gui.geometry("900x800")
-    questions_list = ['Do you have a best friend?', 'Do you have any siblings?', 'Are your brothers and sisters annoying?', 'Can you count to 1000?', 'Are you afraid of the dark?', 'Do you have a favorite superhero?', 'Do you know your mom’s and dad’s first names?', 'Do your parents ever embarrass you?', 'Do you have a favorite dinosaur?', 'Do you know why the sky is blue?', 'Can you spell onomatopoeia?', 'Have you ever lied to your parents?', 'Do you like ice cream?', 'Do you like broccoli?', 'Have you ever won a contest?', 'Have you ever played on a sports team?', 'Do you help your parents with chores?', 'Have you ever been grounded?', 'Do you have a favorite aunt or uncle?', 'Have you ever broken a bone?', 'Have you ever had stitches?', 'Do you know how to cook?', 'Do you know how to ride a bike?', 'Do you know how to swim?', 'Do you like spiders?', 'Have you ever been to summer camp?', 'Do you have an imaginary friend?', 'Have you ever caught a fish?', 'Have you ever been to a sleepover?', 'Have you ever seen a lion up close?', 'Can you make a dolphin noise?', 'Have you ever moved to a new city?', 'Have you ever read a 100 page book?']
+    questions_dict = {
+        'Do you have a best friend?':["Obviously...", "Go outside."],
+        'Do you have any siblings?':["Hope they aren't annoying", "Lucky..."], 
+        'Are your brothers and sisters annoying?':["No shot sherlock", "Liar!"], 
+        'Can you count to 1000?':["You are patient", "Let it stay that way"], 
+        'Are you afraid of the dark?':["Good for you", "You gotta get over it eventually."], 
+        'Do you have a favorite superhero?':["OK", "Find one!"], 
+        'Do you know your mom’s and dad’s first names?':["OK Good", "You stupid!"], 
+        'Do your parents ever embarrass you?':["Obviously", "You have got to be lying"], 
+        'Do you have a favorite dinosaur?':["Dinosaur GRRR-George from Peppa Pig", "gr"], 
+        'Do you know why the sky is blue?':["Good, you better", "2 words: Touch.Grass."], 
+        'Can you spell onomatopoeia?':["Good.", "I hate that word too."], 
+        'Have you ever lied to your parents?':["At least you're not lying here", "There we go again"], 
+        'Do you like ice cream?':["Why would you not?", "Psychopath.."], 
+        'Do you like broccoli?':["WHATT?", "Of course"], 
+        'Have you ever won a contest?':["Yay!", "Go away. Loser"], 
+        'Have you ever played on a sports team?':["",""],
+        'Do you help your parents with chores?':["",""], 
+        'Have you ever been grounded?':["",""], 
+        'Do you have a favorite aunt or uncle?':["",""], 
+        'Have you ever broken a bone?':["",""], 
+        'Have you ever had stitches?':["",""], 
+        'Do you know how to cook?':["",""], 
+        'Do you know how to ride a bike?':["",""], 
+        'Do you know how to swim?':["",""], 
+        'Do you like spiders?':["",""], 
+        'Have you ever been to summer camp?':["",""], 
+        'Do you have an imaginary friend?':["",""], 
+        'Have you ever caught a fish?':["",""], 
+        'Have you ever been to a sleepover?':["",""], 
+        'Have you ever seen a lion up close?':["",""], 
+        'Can you make a dolphin noise?':["",""], 
+        'Have you ever moved to a new city?':["",""], 
+        'Have you ever read a 100 page book?':["",""]
+    }
     
-    for index, one_question in enumerate(questions_list):
-        print(str(index+1) + ". " + one_question)
- 
-    questions_5 = random.sample(questions_list, 5)
+    questions_list = list(questions_dict.keys())
+
+    questions_asked = random.sample(questions_list, 5)
     target_values = []  
     for i in range(5):
-
-        aa = questions_5[i]
+        aa = questions_asked[i]
         question_label=Label(gui, text=aa).grid(row =i, column = 0)
 
-        target_value_1 = StringVar(gui)
+        target_value_1 = StringVar()
         target_value_1.set("None") # default value
 
         w = OptionMenu(gui, target_value_1, "YES", "NO").grid(row =i, column = 1)
         target_values.append(target_value_1)
 
-    show_history= Button(gui, text="Show history", command=partial(show_stuff, gui, target_values)
-                         ).grid(row=0, column=3)
+    labels_for_response = []
+    response_values = []
+    for index, one_value in enumerate(target_values):
+
+        response_string = StringVar()
+        response_string.set("Bot is thinking....")
+        response_values.append(response_string)
+
+        response = Label(gui, textvariable=response_string).grid(row=index, column= 2)
+        labels_for_response.append(response)
+
+    responde= Button(gui, text="Respond", command=partial(show_stuff, gui, questions_asked, target_values, questions_dict, response_values)
+                         ).grid(row=10, column=0)
     
