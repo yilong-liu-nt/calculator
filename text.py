@@ -1,8 +1,18 @@
 import random
 from tkinter import *
+import tkinter as tk
+
 import time
 from functools import partial
 
+
+def tksleep(t):
+    # adopted from https://stackoverflow.com/questions/74214619/how-to-use-tkinter-after-method-to-delay-a-loop-instead-time-sleep
+    ms = int(t*1000)
+    root = tk._get_default_root()
+    var = tk.IntVar(root)
+    root.after(ms, lambda: var.set(1))
+    root.wait_variable(var)
 
 
 def show_stuff(gui, questions_asked, target_values, questions_dict, response_values):
@@ -10,6 +20,9 @@ def show_stuff(gui, questions_asked, target_values, questions_dict, response_val
     for index, one_value in enumerate(target_values):
         question = questions_asked[index]
         response_string = response_values[index]
+
+        response_string.set("Bot is thinking...")
+        tksleep(random.choice([0.5, 1, 1.5, 2]))
 
         if one_value.get() == "YES":
             response_string.set(questions_dict[question][0])
@@ -47,24 +60,24 @@ def textWindow(master):
         'Do you like ice cream?':["Why would you not?", "Psychopath.."], 
         'Do you like broccoli?':["WHATT?", "Of course"], 
         'Have you ever won a contest?':["Yay!", "Go away. Loser"], 
-        'Have you ever played on a sports team?':["",""],
-        'Do you help your parents with chores?':["",""], 
-        'Have you ever been grounded?':["",""], 
-        'Do you have a favorite aunt or uncle?':["",""], 
-        'Have you ever broken a bone?':["",""], 
-        'Have you ever had stitches?':["",""], 
-        'Do you know how to cook?':["",""], 
-        'Do you know how to ride a bike?':["",""], 
-        'Do you know how to swim?':["",""], 
-        'Do you like spiders?':["",""], 
-        'Have you ever been to summer camp?':["",""], 
-        'Do you have an imaginary friend?':["",""], 
-        'Have you ever caught a fish?':["",""], 
-        'Have you ever been to a sleepover?':["",""], 
-        'Have you ever seen a lion up close?':["",""], 
-        'Can you make a dolphin noise?':["",""], 
-        'Have you ever moved to a new city?':["",""], 
-        'Have you ever read a 100 page book?':["",""]
+        'Have you ever played on a sports team?':["Good, you better","What is grass?"],
+        'Do you help your parents with chores?':["You better be","You terrible human"], 
+        'Have you ever been grounded?':["At least your telling the truth","LIAR"], 
+        'Do you have a favorite aunt or uncle?':["Just don't tell them","Saves you the trouble"], 
+        'Have you ever broken a bone?':["OuCh!","You are careful"], 
+        'Have you ever had stitches?':["They suck..","Lucky"], 
+        'Do you know how to cook?':["Who let em cook?","You're scared of being fried :/"], 
+        'Do you know how to ride a bike?':["Yeah no shot","How? Your are legit no smarter than a 2 year old :/"], 
+        'Do you know how to swim?':["Nobody's drowning today!","I would advise staying away from boats then."], 
+        'Do you like spiders?':["You are the minority here.","I respect that."], 
+        'Have you ever been to summer camp?':["Ok","How do you spend your summers then?"], 
+        'Do you have an imaginary friend?':["Because you have no friends ahahaaa","You have friends :)"], 
+        'Have you ever caught a fish?':["Yay","Bro.."], 
+        'Have you ever been to a sleepover?':["Typical...","Maybe because you have no friends ahahahah"], 
+        'Have you ever seen a lion up close?':["Hes super spookifying I know","Good, make it stay that way"], 
+        'Can you make a dolphin noise?':["BOY WHAT!?!?","You are still sane :)"], 
+        'Have you ever moved to a new city?':["Who hasn't?","Ain't no way"], 
+        'Have you ever read a 100 page book?':["Good, you better have","You are stupid IQ = 21 https://www.youtube.com/watch?v=iF9Xf2ilKO8"]
     }
     
     questions_list = list(questions_dict.keys())
@@ -86,7 +99,7 @@ def textWindow(master):
     for index, one_value in enumerate(target_values):
 
         response_string = StringVar()
-        response_string.set("Bot is thinking....")
+        response_string.set("Click respond to get response")
         response_values.append(response_string)
 
         response = Label(gui, textvariable=response_string).grid(row=index, column= 2)
