@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     master = Tk()
     master.title("Calculator Home Screen")
-    master.geometry("1000x1200")
+    master.geometry("1000x600")
 
     label = Label(master, text= "Welcome to use the following calculators.").grid(row=0, column=0, columnspan=2)
 

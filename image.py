@@ -11,24 +11,75 @@ img1 = None
 img2 = None
 resultImage = None
 image_size = (256, 256)
+filename_1 = None
+all_frames_resized = []
+frameCnt = 0
+
+
+def play_image(imgLabel, frames, frameCnt):
+    def dynamic(count):
+        print("dynamic count", count)
+        count += 1
+        if count < frameCnt:
+            imgLabel.config(image=frames[count])
+            imgLabel.after(100, partial(dynamic, count))
+        else:
+            count = 0
+            imgLabel.config(image=frames[count])
+            imgLabel.after(100, partial(dynamic, count))
+
+    dynamic(0)
+
 
 def upload_image_1(gui):
     global img1
+    global all_frames_resized
+    global filename_1
+    global frameCnt
 
-    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
-    filename = filedialog.askopenfilename(filetypes=file_types)
+    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg'), ('Gif Files', '*.Gif')]
+    filename_1 = filedialog.askopenfilename(filetypes=file_types)
+    
+    if filename_1[-3:].lower() == 'gif':
+        img = Image.open(filename_1)
+        frameCnt = img.n_frames
+        all_frames = [PhotoImage(file=filename_1, format='gif -index %i' % (i)) for i in range(frameCnt)]
+        
+        all_frames_resized = []
+        for one_frame in all_frames:
+            # get image from PhotoImage
+            one_frame_image_from_photoimage = ImageTk.getimage(one_frame)
 
-    img1 = Image.open(filename)
-    resized_image = img1.resize(image_size)
-    img1= ImageTk.PhotoImage(resized_image)
+            # resize image
+            resized_image = one_frame_image_from_photoimage.resize(image_size)
 
-    Label(gui, image=img1).grid(row=3, column=0)
+            # convert to Photo Image
+            resized_image_photoimage = ImageTk.PhotoImage(resized_image)
+
+            # append resized ones
+            all_frames_resized.append(resized_image_photoimage)
+
+        print(f"There are {len(all_frames_resized)} images")
+        print(all_frames_resized)
+
+        imgLabel = Label(gui, image=all_frames_resized[0])
+        imgLabel.grid(row=3, column=0)
+        print("ImageLabel", imgLabel)
+
+        play_image(imgLabel, all_frames_resized, frameCnt)
+        
+    else:
+        img1 = Image.open(filename_1)
+        resized_image = img1.resize(image_size)
+        img1= ImageTk.PhotoImage(resized_image)
+
+        Label(gui, image=img1).grid(row=3, column=0)
 
 
 def upload_image_2(gui):
     global img2
 
-    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
+    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg'), ('Gif Files', '*.Gif')]
     filename = filedialog.askopenfilename(filetypes=file_types)
     
     img2 = Image.open(filename)
@@ -40,18 +91,39 @@ def upload_image_2(gui):
 
 def image_add(gui):
     global img1
+    global all_frames_resized
     global img2
     global resultImage
+    global resultImages
+    global frameCnt
 
-    img1_arr = np.asarray(ImageTk.getimage(img1))
-    img2_arr = np.asarray(ImageTk.getimage(img2))
+    if filename_1[-3:].lower() == 'gif':
+        img2_arr = np.asarray(ImageTk.getimage(img2))
 
-    addition = img1_arr//2 + img2_arr//2
+        resultImages = []
+        for one_frame in all_frames_resized:
+            img1_arr = np.asarray(ImageTk.getimage(one_frame))
 
-    resultImage = ImageTk.PhotoImage(Image.fromarray(addition))
+            addition = img1_arr//2 + img2_arr//2
 
-    Label(gui, image=resultImage).grid(row=3, column=2)
+            resultImage = ImageTk.PhotoImage(Image.fromarray(addition))
 
+            resultImages.append(resultImage)
+
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
+        print("ImageLabel", imgLabel)
+
+        play_image(imgLabel, resultImages, frameCnt)
+    else:
+        img1_arr = np.asarray(ImageTk.getimage(img1))
+        img2_arr = np.asarray(ImageTk.getimage(img2))
+
+        addition = img1_arr//2 + img2_arr//2
+
+        resultImage = ImageTk.PhotoImage(Image.fromarray(addition))
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
 
 
 def image_minus(gui):
