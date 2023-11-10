@@ -16,22 +16,31 @@ all_frames_resized = []
 frameCnt = 0
 
 
-def play_image(imgLabel, frames, frameCnt):
-    def dynamic(count):
-        print("dynamic count", count)
+
+def play_image(imgLabel, frames, frameCnt, entry_framespeed):
+
+    def dynamic(count, entry_framespeed):
+        sped = entry_framespeed.get()
+
+        try:
+            sped = int(sped)
+        except:
+            sped = 100
+
+
         count += 1
         if count < frameCnt:
             imgLabel.config(image=frames[count])
-            imgLabel.after(100, partial(dynamic, count))
+            imgLabel.after(sped, partial(dynamic, count, entry_framespeed))
         else:
             count = 0
             imgLabel.config(image=frames[count])
-            imgLabel.after(100, partial(dynamic, count))
+            imgLabel.after(sped, partial(dynamic, count, entry_framespeed))
 
-    dynamic(0)
+    dynamic(0, entry_framespeed)
 
 
-def upload_image_1(gui):
+def upload_image_1(gui, entry_framespeed):
     global img1
     global all_frames_resized
     global filename_1
@@ -66,7 +75,7 @@ def upload_image_1(gui):
         imgLabel.grid(row=3, column=0)
         print("ImageLabel", imgLabel)
 
-        play_image(imgLabel, all_frames_resized, frameCnt)
+        play_image(imgLabel, all_frames_resized, frameCnt, entry_framespeed)
         
     else:
         img1 = Image.open(filename_1)
@@ -89,7 +98,7 @@ def upload_image_2(gui):
     Label(gui, image=img2).grid(row=3, column=1)
 
 
-def image_add(gui):
+def image_add(gui, entry_framespeed):
     global img1
     global all_frames_resized
     global img2
@@ -114,7 +123,7 @@ def image_add(gui):
         imgLabel.grid(row=3, column=2)
         print("ImageLabel", imgLabel)
 
-        play_image(imgLabel, resultImages, frameCnt)
+        play_image(imgLabel, resultImages, frameCnt, entry_framespeed)
     else:
         img1_arr = np.asarray(ImageTk.getimage(img1))
         img2_arr = np.asarray(ImageTk.getimage(img2))
@@ -126,19 +135,43 @@ def image_add(gui):
         Label(gui, image=resultImage).grid(row=3, column=2)
 
 
-def image_minus(gui):
+def image_minus(gui, entry_framespeed):
     global img1
     global img2
     global resultImage
+    global frameCnt
+    global resultImages
+    global all_frames_resized
 
-    img1_arr = np.asarray(ImageTk.getimage(img1))
-    img2_arr = np.asarray(ImageTk.getimage(img2))
+    if filename_1[-3:].lower() == 'gif':
+        img2_arr = np.asarray(ImageTk.getimage(img2))
 
-    minus_arr = img1_arr - img2_arr
+        resultImages = []
+        for one_frame in all_frames_resized:
+            img1_arr = np.asarray(ImageTk.getimage(one_frame))
 
-    resultImage = ImageTk.PhotoImage(Image.fromarray(minus_arr))
+            minus = img1_arr - img2_arr # R: 0, G: 1, B: 2, T: 3
+            minus[:,:, 3] = img1_arr[:,:,3]
 
-    Label(gui, image=resultImage).grid(row=3, column=2)
+            resultImage = ImageTk.PhotoImage(Image.fromarray(minus))
+
+            resultImages.append(resultImage)
+
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
+        print("ImageLabel", imgLabel)
+
+        play_image(imgLabel, resultImages, frameCnt, entry_framespeed)
+    else:
+        img1_arr = np.asarray(ImageTk.getimage(img1))
+        img2_arr = np.asarray(ImageTk.getimage(img2))
+
+        minusarray = img1_arr - img2_arr
+        minusarray[:,:, 3] = img1_arr[:,:,3]//2 + img2_arr[:,:,3]//2
+        resultImage = ImageTk.PhotoImage(Image.fromarray(minusarray))
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
+
 
 
 def image_transpose(gui):
@@ -240,6 +273,7 @@ def imageWindow(master):
     global target_R
     global target_G
     global target_B
+    
 
     gui = Toplevel(master)
 
@@ -251,10 +285,13 @@ def imageWindow(master):
 
     # set the configuration of GUI window
     gui.geometry("900x800")
+    entry_framespeed = StringVar()
+    entry_framespeed.set("Input frame delay in ms")
+    entry_speed = Entry(gui, textvariable=entry_framespeed).grid(row = 8, column = 0)
+    print(f"Entry speed: {entry_framespeed.get()}")
     
-    
-    button_plus = Button(gui, text='-', command=partial(image_minus, gui)).grid(row=0, column=0)
-    button_minus = Button(gui, text='+', command=partial(image_add, gui)).grid(row=0, column=1)
+    button_plus = Button(gui, text='-', command=partial(image_minus, gui, entry_framespeed)).grid(row=0, column=0)
+    button_minus = Button(gui, text='+', command=partial(image_add, gui, entry_framespeed)).grid(row=0, column=1)
     button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui)).grid(row=4, column=0)
 
     set_color_r = Button(gui, text='Set R',
@@ -266,7 +303,7 @@ def imageWindow(master):
     
     
     upload_button_1 = Button(gui, text='Upload Image 1',
-                           command=partial(upload_image_1, gui)).grid(row=2, column=0)
+                           command=partial(upload_image_1, gui, entry_framespeed)).grid(row=2, column=0)
     
     upload_button_2 = Button(gui, text='Upload Image 2',
                            command=partial(upload_image_2, gui)).grid(row=2, column=1)
@@ -290,6 +327,7 @@ def imageWindow(master):
     Label_R = Label(gui, text='Input R: 0-255').grid(row=7, column=0)
     Label_G = Label(gui, text='Input G: 0-255').grid(row=7, column=1)
     Lable_B = Label(gui, text='Input B: 0-255').grid(row=7, column=2)
+
     img=Image.new("RGB", image_size, (255, 255, 255))
     img1=ImageTk.PhotoImage(img)
     Label(gui, image=img1).grid(row=3, column=0)
