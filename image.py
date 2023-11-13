@@ -10,6 +10,7 @@ from PIL import Image, ImageTk, ImageFilter
 img1 = None
 img2 = None
 resultImage = None
+resultImages = None
 image_size = (256, 256)
 filename_1 = None
 all_frames_resized = []
@@ -46,7 +47,7 @@ def upload_image_1(gui, entry_framespeed):
     global filename_1
     global frameCnt
 
-    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg'), ('Gif Files', '*.Gif')]
+    file_types = [('Gif Files', '*.Gif'), ('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
     filename_1 = filedialog.askopenfilename(filetypes=file_types)
     
     if filename_1[-3:].lower() == 'gif':
@@ -68,12 +69,8 @@ def upload_image_1(gui, entry_framespeed):
             # append resized ones
             all_frames_resized.append(resized_image_photoimage)
 
-        print(f"There are {len(all_frames_resized)} images")
-        print(all_frames_resized)
-
         imgLabel = Label(gui, image=all_frames_resized[0])
         imgLabel.grid(row=3, column=0)
-        print("ImageLabel", imgLabel)
 
         play_image(imgLabel, all_frames_resized, frameCnt, entry_framespeed)
         
@@ -121,7 +118,6 @@ def image_add(gui, entry_framespeed):
 
         imgLabel = Label(gui, image=resultImages[0])
         imgLabel.grid(row=3, column=2)
-        print("ImageLabel", imgLabel)
 
         play_image(imgLabel, resultImages, frameCnt, entry_framespeed)
     else:
@@ -159,7 +155,6 @@ def image_minus(gui, entry_framespeed):
 
         imgLabel = Label(gui, image=resultImages[0])
         imgLabel.grid(row=3, column=2)
-        print("ImageLabel", imgLabel)
 
         play_image(imgLabel, resultImages, frameCnt, entry_framespeed)
     else:
@@ -174,42 +169,91 @@ def image_minus(gui, entry_framespeed):
 
 
 
-def image_transpose(gui):
+def image_transpose(gui, entry_framespeed):
     """
     Rotate 45 degree
     """
     global resultImage
+    global resultImages
+    global frameCnt
+    if filename_1[-3:].lower() == 'gif':
+        transposed_frame_list = []
+        for one_frame in resultImages:
+            my_image = ImageTk.getimage(one_frame)
+            rotated_image = my_image.rotate(45)
+            result_Image = ImageTk.PhotoImage(rotated_image)
+            transposed_frame_list.append(result_Image)
 
-    my_image = ImageTk.getimage(resultImage)
-    rotated_image = my_image.rotate(45)
-    resultImage = ImageTk.PhotoImage(rotated_image)
+        resultImages = transposed_frame_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
 
-    Label(gui, image=resultImage).grid(row=3, column=2)
+        play_image(imgLabel, transposed_frame_list, frameCnt, entry_framespeed)
+
+    else:
+
+        my_image = ImageTk.getimage(resultImage)
+        rotated_image = my_image.rotate(45)
+        resultImage = ImageTk.PhotoImage(rotated_image)
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
 
 
-def blur_image(gui):
+def blur_image(gui, entry_framespeed):
     global resultImage
+    global resultImages
+    global frameCnt
+    if filename_1[-3:].lower() == 'gif':
+        blurred_frames_list = []
+        for one_frame in resultImages:
+            my_image = ImageTk.getimage(one_frame)
+            blurred_image = my_image.filter(ImageFilter.BLUR)
+            result_Image = ImageTk.PhotoImage(blurred_image)
+            blurred_frames_list.append(result_Image)
 
-    my_image = ImageTk.getimage(resultImage)
-    blurred_image = my_image.filter(ImageFilter.BLUR)
-    resultImage = ImageTk.PhotoImage(blurred_image)
+        resultImages = blurred_frames_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
 
-    Label(gui, image=resultImage).grid(row=3, column=2)
+        play_image(imgLabel, blurred_frames_list, frameCnt, entry_framespeed)
+
+    else:
+        my_image = ImageTk.getimage(resultImage)
+        blurred_image = my_image.filter(ImageFilter.BLUR)
+        resultImage = ImageTk.PhotoImage(blurred_image)
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
 
 
-def edge_image(gui):
+def edge_image(gui, entry_framespeed):
     global resultImage
+    global resultImages
+    global frameCnt
+    if filename_1[-3:].lower() == 'gif':
+        edge_frames_list = []
+        for one_frame in resultImages:
+            my_image = ImageTk.getimage(one_frame)
+            edge_restored_image = my_image.filter(ImageFilter.EDGE_ENHANCE)
+            result_Image = ImageTk.PhotoImage(edge_restored_image)
+            edge_frames_list.append(result_Image)
 
+        resultImages = edge_frames_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
 
-    my_image = ImageTk.getimage(resultImage)
-    edge_restored_image = my_image.filter(ImageFilter.EDGE_ENHANCE)
-    resultImage = ImageTk.PhotoImage(edge_restored_image)
+        play_image(imgLabel, edge_frames_list, frameCnt, entry_framespeed)
 
-    Label(gui, image=resultImage).grid(row=3, column=2)
+    else:
+        my_image = ImageTk.getimage(resultImage)
+        edge_restored_image = my_image.filter(ImageFilter.EDGE_ENHANCE)
+        resultImage = ImageTk.PhotoImage(edge_restored_image)
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
     
 def set_r(gui):
     global resultImage
     global target_R
+    global resultImages
 
     try:
         target_r_value = int(target_R.get())
@@ -231,7 +275,7 @@ def set_r(gui):
 def set_g(gui):
     global resultImage
     global target_G
-
+    global resultImages
     try:
         target_g_value = int(target_G.get())
     except:
@@ -250,6 +294,7 @@ def set_g(gui):
 def set_b(gui):
     global resultImage
     global target_B
+    global resultImages
 
     try:
         target_b_value = int(target_B.get())
@@ -288,11 +333,10 @@ def imageWindow(master):
     entry_framespeed = StringVar()
     entry_framespeed.set("Input frame delay in ms")
     entry_speed = Entry(gui, textvariable=entry_framespeed).grid(row = 8, column = 0)
-    print(f"Entry speed: {entry_framespeed.get()}")
     
     button_plus = Button(gui, text='-', command=partial(image_minus, gui, entry_framespeed)).grid(row=0, column=0)
     button_minus = Button(gui, text='+', command=partial(image_add, gui, entry_framespeed)).grid(row=0, column=1)
-    button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui)).grid(row=4, column=0)
+    button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui, entry_framespeed)).grid(row=4, column=0)
 
     set_color_r = Button(gui, text='Set R',
                             command=partial(set_r, gui)).grid(row=1, column=0)
@@ -309,9 +353,9 @@ def imageWindow(master):
                            command=partial(upload_image_2, gui)).grid(row=2, column=1)
     
     blur_button= Button(gui, text='Blur Image',
-                           command=partial(blur_image, gui)).grid(row=4, column=1)
+                           command=partial(blur_image, gui, entry_framespeed)).grid(row=4, column=1)
     edge_button= Button(gui, text='Edge Detection',
-                           command=partial(edge_image, gui)).grid(row=4, column=2)
+                           command=partial(edge_image, gui, entry_framespeed)).grid(row=4, column=2)
     
     Label(gui, text = "Result").grid(row=2, column=2)
 
