@@ -250,29 +250,54 @@ def edge_image(gui, entry_framespeed):
 
         Label(gui, image=resultImage).grid(row=3, column=2)
     
-def set_r(gui):
+def set_r(gui, entry_framespeed):
     global resultImage
     global target_R
     global resultImages
-
+    global frameCnt
+    
     try:
         target_r_value = int(target_R.get())
     except:
         target_r_value = 0
-    
-    my_image = ImageTk.getimage(resultImage)
-    array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
-    # 0: R
-    # 1: G
-    # 2: B
-    # 3: transparent
-    array_1[:,:,0] = np.ones((256, 256), dtype=int)*target_r_value
-    resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
-    Label(gui, image=resultImage).grid(row=3, column=2)
+
+    if filename_1[-3:].lower() == 'gif':
+        r_frame_list = []
+        for one_frame in resultImages:
+
+            my_image = ImageTk.getimage(one_frame)
+            
+            array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+            # 0: R
+            # 1: G
+            # 2: B
+            # 3: transparent
+            array_1[:,:,0] = np.ones((256, 256), dtype=int)*target_r_value
+            result_Image = ImageTk.PhotoImage(Image.fromarray(array_1))
+
+            r_frame_list.append(result_Image)
+
+        resultImages = r_frame_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
+
+        play_image(imgLabel, r_frame_list, frameCnt, entry_framespeed)
+
+    else:  
+        my_image = ImageTk.getimage(resultImage)
+        array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+        # 0: R
+        # 1: G
+        # 2: B
+        # 3: transparent
+        array_1[:,:,0] = np.ones((256, 256), dtype=int)*target_r_value
+        resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
+
+        Label(gui, image=resultImage).grid(row=3, column=2)
 
 
 
-def set_g(gui):
+def set_g(gui, entry_framespeed):
     global resultImage
     global target_G
     global resultImages
@@ -280,36 +305,84 @@ def set_g(gui):
         target_g_value = int(target_G.get())
     except:
         target_g_value = 0
-    
-    my_image = ImageTk.getimage(resultImage)
-    array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
-    # 0: R
-    # 1: G
-    # 2: B
-    # 3: transparent
-    array_1[:,:,1] = np.ones((256, 256), dtype=int) * target_g_value
-    resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
-    Label(gui, image=resultImage).grid(row=3, column=2)
+    if filename_1[-3:].lower() == 'gif':
+        g_frame_list = []
+        for one_frame in resultImages:
 
-def set_b(gui):
+            my_image = ImageTk.getimage(one_frame)
+            
+            array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+            # 0: R
+            # 1: G
+            # 2: B
+            # 3: transparent
+            array_1[:,:,1] = np.ones((256, 256), dtype=int) * target_g_value
+            result_Image = ImageTk.PhotoImage(Image.fromarray(array_1))
+            Label(gui, image=resultImage).grid(row=3, column=2)
+
+            g_frame_list.append(result_Image)
+
+        resultImages = g_frame_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
+
+        play_image(imgLabel, g_frame_list, frameCnt, entry_framespeed)
+
+    else:
+    
+        my_image = ImageTk.getimage(resultImage)
+        array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+        # 0: R
+        # 1: G
+        # 2: B
+        # 3: transparent
+        array_1[:,:,1] = np.ones((256, 256), dtype=int) * target_g_value
+        resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
+        Label(gui, image=resultImage).grid(row=3, column=2)
+
+def set_b(gui, entry_framespeed):
     global resultImage
     global target_B
     global resultImages
+    
 
     try:
         target_b_value = int(target_B.get())
     except:
         target_b_value = 0
+    if filename_1[-3:].lower() == 'gif':
+        b_frame_list = []
+        for one_frame in resultImages:
+
+            my_image = ImageTk.getimage(one_frame)
+            array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+            # 0: R
+            # 1: G
+            # 2: B
+            # 3: transparent
+            array_1[:,:,2] = np.ones((256, 256), dtype=int)*target_b_value
+            result_Image = ImageTk.PhotoImage(Image.fromarray(array_1))
+            Label(gui, image=resultImage).grid(row=3, column=2)
+
+            b_frame_list.append(result_Image)
+
+        resultImages = b_frame_list  
+        imgLabel = Label(gui, image=resultImages[0])
+        imgLabel.grid(row=3, column=2)
+
+        play_image(imgLabel, b_frame_list, frameCnt, entry_framespeed)
+
+    else:
     
-    my_image = ImageTk.getimage(resultImage)
-    array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
-    # 0: R
-    # 1: G
-    # 2: B
-    # 3: transparent
-    array_1[:,:,2] = np.ones((256, 256), dtype=int)*target_b_value
-    resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
-    Label(gui, image=resultImage).grid(row=3, column=2)
+        my_image = ImageTk.getimage(resultImage)
+        array_1 = np.asarray(my_image).copy()  # (256, 256, 4)
+        # 0: R
+        # 1: G
+        # 2: B
+        # 3: transparent
+        array_1[:,:,2] = np.ones((256, 256), dtype=int)*target_b_value
+        resultImage = ImageTk.PhotoImage(Image.fromarray(array_1))
+        Label(gui, image=resultImage).grid(row=3, column=2)
 
 def imageWindow(master):
     global img1
@@ -339,11 +412,11 @@ def imageWindow(master):
     button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui, entry_framespeed)).grid(row=4, column=0)
 
     set_color_r = Button(gui, text='Set R',
-                            command=partial(set_r, gui)).grid(row=1, column=0)
+                            command=partial(set_r, gui, entry_framespeed)).grid(row=1, column=0)
     set_color_g = Button(gui, text='Set G',
-                            command=partial(set_g, gui)).grid(row=1, column=1)
+                            command=partial(set_g, gui, entry_framespeed)).grid(row=1, column=1)
     set_color_b = Button(gui, text='Set B',
-                            command=partial(set_b, gui)).grid(row=1, column=2)
+                            command=partial(set_b, gui, entry_framespeed)).grid(row=1, column=2)
     
     
     upload_button_1 = Button(gui, text='Upload Image 1',
