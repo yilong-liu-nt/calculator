@@ -40,6 +40,21 @@ def play_image(imgLabel, frames, frameCnt, entry_framespeed):
 
     dynamic(0, entry_framespeed)
 
+    
+def download_img(gui):
+    global resultImage
+
+    
+    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
+    hsl = filedialog.asksaveasfile(mode='w', filetypes=file_types)
+    if not hsl:
+        return
+    
+    my_image = ImageTk.getimage(resultImage)
+    
+    my_image.save(hsl.name)
+
+
 
 def upload_image_1(gui, entry_framespeed):
     global img1
@@ -430,7 +445,8 @@ def imageWindow(master):
     edge_button= Button(gui, text='Edge Detection',
                            command=partial(edge_image, gui, entry_framespeed)).grid(row=4, column=2)
     
-    Label(gui, text = "Result").grid(row=2, column=2)
+    download_button = Button(gui, text = "Download Result",
+                             command=partial(download_img, gui)).grid(row=2, column=2)
 
     target_R = StringVar()
     target_G = StringVar()
