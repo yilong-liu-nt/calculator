@@ -41,18 +41,33 @@ def play_image(imgLabel, frames, frameCnt, entry_framespeed):
     dynamic(0, entry_framespeed)
 
     
-def download_img(gui):
+def download_img(gui, entry_framespeed):
     global resultImage
+    global resultImages
 
-    
-    file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
+
+    sped = entry_framespeed.get()
+
+    try:
+        sped = int(sped)
+    except:
+        sped = 100
+
+    file_types = [('Gif Files', '*.Gif'), ('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
     hsl = filedialog.asksaveasfile(mode='w', filetypes=file_types)
     if not hsl:
         return
-    
-    my_image = ImageTk.getimage(resultImage)
-    
-    my_image.save(hsl.name)
+    if resultImage is not None:
+        
+        my_image = ImageTk.getimage(resultImage)
+        
+        my_image.save(hsl.name)
+    print(sped)
+    if resultImages is not None:
+        frames = [ImageTk.getimage(one_image) for one_image in resultImages]
+        frame_one = frames[0]
+        frame_one.save(hsl.name, format="GIF", append_images=frames,
+               save_all=True, duration=sped, loop=0)
 
 
 
@@ -446,7 +461,7 @@ def imageWindow(master):
                            command=partial(edge_image, gui, entry_framespeed)).grid(row=4, column=2)
     
     download_button = Button(gui, text = "Download Result",
-                             command=partial(download_img, gui)).grid(row=2, column=2)
+                             command=partial(download_img, gui, entry_framespeed)).grid(row=2, column=2)
 
     target_R = StringVar()
     target_G = StringVar()
