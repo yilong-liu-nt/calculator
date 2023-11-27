@@ -5,6 +5,7 @@ import tkinter as tk
 import time
 from functools import partial
 
+question_labels = None
 
 def tksleep(t):
     # adopted from https://stackoverflow.com/questions/74214619/how-to-use-tkinter-after-method-to-delay-a-loop-instead-time-sleep
@@ -80,10 +81,17 @@ def textWindow(master):
         'Have you ever read a 100 page book?':["Good, you better have","You are stupid IQ = 21 https://www.youtube.com/watch?v=iF9Xf2ilKO8"]
     }
     
-    questions_list = list(questions_dict.keys())
+    cow(gui,questions_dict)
+    redo = Button(gui, text="Do it again", command=partial(cow, gui, questions_dict)).grid(row=10, column=1)
 
+def cow(gui,questions_dict):
+    global question_labels
+
+    questions_list = list(questions_dict.keys())
     questions_asked = random.sample(questions_list, 5)
-    target_values = []  
+    target_values = [] 
+
+    # https://stackoverflow.com/questions/21592630/why-do-my-tkinter-widgets-get-stored-as-non
     for i in range(5):
         aa = questions_asked[i]
         question_label=Label(gui, text=aa).grid(row =i, column = 0)
@@ -107,4 +115,3 @@ def textWindow(master):
 
     responde= Button(gui, text="Respond", command=partial(show_stuff, gui, questions_asked, target_values, questions_dict, response_values)
                          ).grid(row=10, column=0)
-    
