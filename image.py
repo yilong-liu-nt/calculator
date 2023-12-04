@@ -15,6 +15,7 @@ image_size = (256, 256)
 filename_1 = None
 all_frames_resized = []
 frameCnt = 0
+url_adress = None
 
 
 
@@ -76,6 +77,29 @@ def upload_image_1(gui, entry_framespeed):
     global all_frames_resized
     global filename_1
     global frameCnt
+    global url_adress
+
+    input_url = url_adress.get()
+    ulr_image_status = False
+    try:
+        import urllib.request
+
+        urllib.request.urlretrieve(input_url, "url_image.png")
+        ulr_image_status = True
+        filename_1 = "url_image.png"
+        
+        img1 = Image.open(filename_1)
+        resized_image = img1.resize(image_size)
+        img1= ImageTk.PhotoImage(resized_image)
+
+        Label(gui, image=img1).grid(row=3, column=0)
+
+    except:
+        print("The provided URL is not right")
+
+
+    if ulr_image_status:
+        return
 
     file_types = [('Gif Files', '*.Gif'), ('Png Files', '*.Png'), ('Jpg Files', '*.Jpg')]
     filename_1 = filedialog.askopenfilename(filetypes=file_types)
@@ -421,6 +445,7 @@ def imageWindow(master):
     global target_R
     global target_G
     global target_B
+    global url_adress
     
 
     gui = Toplevel(master)
@@ -433,10 +458,14 @@ def imageWindow(master):
 
     # set the configuration of GUI window
     gui.geometry("900x800")
+    url_adress = StringVar()
+    url_adress.set("Url here")
     entry_framespeed = StringVar()
     entry_framespeed.set("Input frame delay in ms")
     entry_speed = Entry(gui, textvariable=entry_framespeed).grid(row = 8, column = 0)
-    
+    url_entry = Entry(gui, textvariable= url_adress).grid(row = 8, column = 1)
+
+
     button_plus = Button(gui, text='-', command=partial(image_minus, gui, entry_framespeed)).grid(row=0, column=0)
     button_minus = Button(gui, text='+', command=partial(image_add, gui, entry_framespeed)).grid(row=0, column=1)
     button_minus = Button(gui, text='Transpose', command=partial(image_transpose, gui, entry_framespeed)).grid(row=4, column=0)
