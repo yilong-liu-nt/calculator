@@ -138,6 +138,27 @@ def upload_image_1(gui, entry_framespeed):
 
 def upload_image_2(gui):
     global img2
+    input_url = url_adress.get()
+    ulr_image_status = False
+    try:
+        import urllib.request
+
+        urllib.request.urlretrieve(input_url, "url_image.png")
+        ulr_image_status = True
+        filename_1 = "url_image.png"
+        
+        img2 = Image.open(filename_1)
+        resized_image = img2.resize(image_size)
+        img2= ImageTk.PhotoImage(resized_image)
+
+        Label(gui, image=img2).grid(row=3, column=1)
+
+    except:
+        print("The provided URL is not right")
+
+
+    if ulr_image_status:
+        return
 
     file_types = [('Png Files', '*.Png'), ('Jpg Files', '*.Jpg'), ('Gif Files', '*.Gif')]
     filename = filedialog.askopenfilename(filetypes=file_types)
